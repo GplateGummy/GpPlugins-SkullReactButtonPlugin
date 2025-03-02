@@ -11,53 +11,52 @@ export default definePlugin({
     name: "SkullReact",
     description: "Adds a button to the message hover menu to quickly toggle the 💀 reaction",
     authors: [{name: "GplateGam", id: 1278091053836009522n}],
-
+    
     async start() {
         logger.info("Plugin started");
     },
+    
     stop() {
         logger.info("Plugin stopped");
     },
-    
+   
     hasUserReactedWithSkull(message) {
         if (!message.reactions) return false;
-        
+       
         const skullReaction = message.reactions.find(reaction => reaction.emoji.name === "💀");
         return skullReaction && skullReaction.me;
     },
-    
+   
     async toggleSkullReactionViaAPI(message) {
         try {
             const hasReacted = this.hasUserReactedWithSkull(message);
             logger.info(`${hasReacted ? "Removing" : "Adding"} reaction via API for message ${message.id}`);
-            
+           
             const endpoint = `/channels/${message.channel_id}/messages/${message.id}/reactions/${encodeURIComponent("💀")}/%40me`;
             logger.info(`Using endpoint: ${endpoint}`);
-            
+           
             if (hasReacted) {
                 await RestAPI.del({
                     url: endpoint
                 });
-
                 logger.info("API request successful");
             } else {
                 await RestAPI.put({
                     url: endpoint + "?location=Message%20Reaction%20Picker&type=0",
                     oldFormErrors: true
                 });
-
                 logger.info("API request successful");
             }
-            
+           
             logger.info("Successfully dispatched reaction event");
         } catch (error) {
             logger.error(`Failed to ${this.hasUserReactedWithSkull(message) ? "remove" : "add"} skull reaction via API:`, error);
         }
     },
-    
+   
     renderMessagePopoverButton(message) {
         const hasReacted = this.hasUserReactedWithSkull(message);
-        
+       
         return {
             label: hasReacted ? "Remove 💀 reaction" : "React with 💀",
             icon: SkullIcon,
