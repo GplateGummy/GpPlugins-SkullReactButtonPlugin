@@ -39,14 +39,14 @@ export default definePlugin({
                     url: endpoint
                 });
 
-                logger.info("API request successful, dispatching UI update for removal");
+                logger.info("API request successful");
             } else {
                 await RestAPI.put({
                     url: endpoint + "?location=Message%20Reaction%20Picker&type=0",
                     oldFormErrors: true
                 });
 
-                logger.info("API request successful, dispatching UI update for addition");
+                logger.info("API request successful");
             }
             
             logger.info("Successfully dispatched reaction event");
